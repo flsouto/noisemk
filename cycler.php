@@ -16,7 +16,7 @@ if(!empty($argv[2])){
 
 $files = [];
 
-foreach(scandir($dir=__DIR__.'/output/') as $file){
+foreach(scandir($dir) as $file){
 	if(stristr($file,'.wav')){
 		$file = $dir.'/'.$file;
 		$files[filemtime($file)] = $file;
@@ -43,9 +43,6 @@ while(true){
 	echo " ============= OPTIONS ====================\n";
 	echo "|\n";
 	echo "|  rm + ENTER : remove this loop\n";
-	echo "|  st + ENTER : move to storage\n";
-	echo "|  sm + ENTER : move to samples\n";
-	echo "|  fn + ENTER : move to final\n";
 	echo "|  just ENTER : play next loop\n";
 	echo "|\n";
 	echo " ==========================================\n";
@@ -53,6 +50,7 @@ while(true){
 
 	foreach($files as $i => $file){
 
+		echo basename($file).PHP_EOL;
 		exec("play $file > /dev/null 2>&1 &");
 
 		$input = trim(fgets($stdin));
@@ -68,21 +66,6 @@ while(true){
 			unset($files[$i]);
 		}
 
-		else if($input=='st'){
-			$dest = __DIR__.'/storage/'.time().'.wav';
-			shell_exec("mv $file $dest");
-			unset($files[$i]);
-		}
-		else if($input=='sm'){
-			$dest = __DIR__.'/samples/'.time().'.wav';
-			shell_exec("mv $file $dest");
-			unset($files[$i]);
-		}
-		else if($input=='fn'){
-			$dest = __DIR__.'/final/'.time().'.wav';
-			shell_exec("mv $file $dest");
-			unset($files[$i]);
-		}
 	}
 
 }

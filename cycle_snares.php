@@ -1,6 +1,6 @@
 <?php 
 
-$dir = 'storage';
+$dir = 'snares';
 
 require 'cycler.php';
 

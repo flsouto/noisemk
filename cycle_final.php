@@ -1,6 +1,6 @@
 <?php 
 
-$dir = 'storage';
+$dir = 'final';
 
 require 'cycler.php';
 

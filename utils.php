@@ -32,7 +32,11 @@ function get_files($max=null){
 
 function smp($file, $force120 = true){
 
-	$smp = new Sampler($file);
+	if(!$file instanceof Sampler){
+		$smp = new Sampler($file);
+	} else {
+		$smp = $file;
+	}
 	$len = $smp->len();
 
 	if(in_array($len,[4,8,16,32])){

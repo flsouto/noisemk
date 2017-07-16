@@ -1,18 +1,19 @@
-<?php 
+<?php
 
-require 'utils.php';
+require_once 'utils.php';
 
-// GENERATES LOOPS USING DOWNLOADED LOOPS
+// GENERATES LOOPS USINGS SAMPLES
 
-$files = get_files(200);
+$files = glob("samples/*.wav");
+
 shuffle($files);
 
 $files = array_slice($files,0,rand(5,10));
 
 $mod = function($smp){
-	$smp->each(1,function($smp){
+	$smp->each(rand(0,1)?.5:1,function($smp){
 		$smp->mod('gain '.rand(-40,0));
-		if(!rand(0,5)){
+		if(!rand(0,15)){
 			$smp->chop(rand(0,1)?4:8);
 		}
 		if(!rand(0,5)){
@@ -32,15 +33,13 @@ $stream = smp(array_shift($files));
 $mod($stream);
 
 foreach($files as $file){
-	$smp=smp($file)->cut(0,4);
+	$smp=smp($file);
 	$mod($smp);
 	$stream->mix($smp,false);
 }
 
 
-$stream->cut(0,4);
-$stream->x(4)->mod('speed '.(rand(6,8)/10));
+$stream->mod('speed '.(rand(6,8)/10));
+$stream->x(4);
 $stream->save('output.wav');
-
-
-
+//$stream->play();
