@@ -1,21 +1,18 @@
 <?php 
 
+namespace FlSouto\Noisemk;
 require 'utils.php';
 
-// GENERATES LOOPS USING DOWNLOADED LOOPS
-
-$files = get_files(200);
-shuffle($files);
-
-$files = array_slice($files,0,rand(5,10));
+$files = scan();
+$files = array_slice($files,0,rand(5,20));
 
 $mod = function($smp){
-	$smp->each(1,function($smp){
+	$smp->each(rand(0,1)?.5:1,function($smp){
 		$smp->mod('gain '.rand(-40,0));
 		if(!rand(0,5)){
-			$smp->chop(rand(0,1)?4:8);
+			$smp->chop(array_rand([2=>'',4=>'',8=>'']));
 		}
-		if(!rand(0,5)){
+		if(!rand(0,15)){
 			$smp->mod('reverse');
 		}
 		if(!rand(0,5)){
@@ -28,19 +25,15 @@ $mod = function($smp){
 	});
 };
 
-$stream = smp(array_shift($files));
+$stream = smp(array_shift($files))->to120();
 $mod($stream);
 
 foreach($files as $file){
-	$smp=smp($file)->cut(0,4);
+	$smp=smp($file)->to120()->pick(4);
 	$mod($smp);
 	$stream->mix($smp,false);
 }
 
-
 $stream->cut(0,4);
 $stream->x(4)->mod('speed '.(rand(6,8)/10));
 $stream->save('output.wav');
-
-
-

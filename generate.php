@@ -1,26 +1,39 @@
 <?php
 
-$num = $argv[1];
+$script = $argv[1] ?? null;
+$num = $argv[2] ?? null;
+$destin = $argv[3] ?? null;
 
-if(!ctype_digit($num)){
-	die("Usage: command <NUM>");
+$error = false;
+
+if(empty($script)||!file_exists($script)){
+	$error = "Provide a valid path for <SCRIPT>";
 }
 
-shell_exec("rm output/*.wav");
+else if(!ctype_digit($num)){
+	$error = "Provide a digit for <NUM>";
+}
 
-$patterns = ['pattern3.php'];
+else if(empty($destin)||!is_dir($destin)){
+	$error = "Provide a valid direcotry for <DESTINATION>";
+}
+
+if($error){
+	echo $error."\n";
+	die("Usage: command <SCRIPT> <NUM> <DESTINATION>\n");
+}
 
 $hashes = [];
 
 for($i=1;$i<=$num;$i++){
 
-	$pattern = $patterns[array_rand($patterns)];
-	shell_exec("php $pattern");
+	shell_exec("php $script");
+
 	$hash = md5(file_get_contents("output.wav"));
 	if(isset($hashes[$hash])){
 		continue;
 	}
-	shell_exec("mv output.wav output/loop$i.wav");
+	shell_exec("mv output.wav $destin/".time().".wav");
 	$hashes[$hash] = 1;
 
 }
