@@ -9,7 +9,7 @@ if(empty($argv[1])){
 $source = $argv[1];
 
 if(!empty($argv[2])){
-	$destin = "";
+	$destination = $argv[2];
 }
 
 
@@ -85,7 +85,7 @@ while(true){
 		}
 
 		else if($input=='mv'){
-			if(empty($destin)){
+			if(empty($destination)){
 				die("Destination folder was not given.\n");
 			} else {
 				shell_exec("mv $file $destination");
