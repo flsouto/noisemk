@@ -24,7 +24,7 @@ function scan(){
 
 }
 
-
-function smp($file){
-	return new \FlSouto\Sampler($file);
+function smp($path){
+	$smp = new \FlSouto\Sampler($path);
+	return $smp->mod('rate 44100');
 }

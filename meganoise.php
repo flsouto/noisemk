@@ -1,8 +1,9 @@
 <?php
 
-require 'inshovoid/utils.php';
+require 'utils.php';
 
 use FlSouto\Sampler;
+use function FlSouto\Noisemk\smp;
 
 $files = glob("noise*/*.wav");
 shuffle($files);
@@ -17,16 +18,13 @@ foreach($files as $file){
 	$stream->mix($smp,1);
 }
 
-$ambience = new Sampler("ambience/1.mp3",true);
+$ambience = Sampler::select("ambience/*",true);
 $ambience = $ambience->pick($stream->len());
 $ambience->mod('gain -8');
 $stream->mix($ambience,1);
 
 $stream->mod('speed .5');
 
-$track = new Sampler("/home/fabio/Downloads/InTheShadowOfTheVoidReverb.mp3");
-$track->pick($stream->len(),true);
-//$stream->mix($track,1);
 
 $stream->mod('gain 10');
 $stream->save('output.wav');
