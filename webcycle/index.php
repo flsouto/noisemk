@@ -1,13 +1,28 @@
 <?php
 
+$params = file_get_contents(__DIR__.'/params.json');
+$params = json_decode($params,true);
+
+if(!empty($_REQUEST['rm'])){
+    $f = $_REQUEST['rm'];
+    shell_exec("rm '$f'");
+    return;
+}
+
+if(!empty($_REQUEST['mv'])){
+    $f = $_REQUEST['mv'];
+    $ext = pathinfo($f,PATHINFO_EXTENSION);
+    $to = $params['destination_dir'].'/'.time().'.'.$ext;
+    shell_exec("mv '$f' $to");
+    return;
+}
+
 if(!empty($_REQUEST['get_data'])){
     $contents = file_get_contents($_REQUEST['get_data']);
     $ext = pathinfo($_REQUEST['get_data'], PATHINFO_EXTENSION);
     die('data:audio/'.$ext.';base64,'.base64_encode($contents));
 }
 
-$params = file_get_contents(__DIR__.'/params.json');
-$params = json_decode($params,true);
 
 $target_dir = $params['target_dir'];
 
@@ -19,7 +34,7 @@ shuffle($files);
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Noisemk</title>
+    <title>Noisemk - WebCycle</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta charset="UTF-8" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -38,7 +53,9 @@ shuffle($files);
 
         <button id="btn_play" onClick="playCurrent()">Play</button> &nbsp;&nbsp;&nbsp;
         <button id="btn_next" onclick="setNextAndPlay()">Next</button> &nbsp;&nbsp;&nbsp;
-        <button id="btn_move" onClick="moveCurrent()">Move</button> &nbsp;&nbsp;&nbsp;
+        <?php if(!empty($params['destination_dir'])) : ?>
+            <button id="btn_move" onClick="moveCurrent()">Move</button> &nbsp;&nbsp;&nbsp;
+        <?php endif; ?>
         <button id="btn_rm" onclick="removeCurrent()">Delete</button>
     </div>
 
@@ -65,7 +82,8 @@ shuffle($files);
             currentAudio = $.get('?get_data='+current).pipe(function(data){
                 return new Audio(data);
             });
-            $('#file_name').text(current);
+            var basename = current.split('/').pop();
+            $('#file_name').html(basename);
             $('#counter').text(parseInt($('#counter').text())+1);
             return true;
         }

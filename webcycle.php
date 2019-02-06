@@ -8,7 +8,7 @@ if(empty($argv[1])||empty($argv[2])){
 
 $params = [
     'target_dir' => realpath($argv[1]),
-    'destination_dir' => $argv[3] ?? null
+    'destination_dir' => isset($argv[3]) ? realpath($argv[3]) : null
 ];
 
 file_put_contents(__DIR__.'/webcycle/params.json', json_encode($params, true));
